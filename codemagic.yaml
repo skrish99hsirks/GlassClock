@@ -1,0 +1,29 @@
+workflows:
+  ios-glassclock:
+    name: iOS GlassClock Build
+    max_build_duration: 60
+    environment:
+      vars:
+        XCODE_WORKSPACE: "GlassClock.xcodeproj"
+        XCODE_SCHEME: "GlassClock"
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Set up keychain
+        script: |
+          keychain initialize
+      - name: Install dependencies
+        script: |
+          pod install || true
+      - name: Build .ipa
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - "your-email@example.com"
+
